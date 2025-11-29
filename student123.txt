@@ -1,0 +1,143 @@
+# ============================
+#   BASIC CALCULATOR PROGRAM
+# ============================
+
+class Calculator:
+    """A simple calculator class that supports add, subtract, multiply, and divide."""
+    
+    def add(self, a, b):
+        return a + b
+    
+    def subtract(self, a, b):
+        return a - b
+    
+    def multiply(self, a, b):
+        return a * b
+    
+    def divide(self, a, b):
+        if b == 0:
+            raise ValueError("Division by zero is not allowed.")
+        return a / b
+
+
+# ----------------------------------
+# Helper Functions
+# ----------------------------------
+
+def get_number(prompt):
+    """Prompt the user for a valid numeric input."""
+    while True:
+        value = input(prompt)
+        try:
+            return float(value)
+        except ValueError:
+            print("Invalid input. Please enter a numeric value.")
+
+
+def format_result(result):
+    """Format result: integers shown as int; floats shown with 2 decimals."""
+    if result.is_integer():
+        return str(int(result))
+    return f"{result:.2f}"
+
+
+# ----------------------------------
+# Main Program
+# ----------------------------------
+
+def main():
+    calc = Calculator()
+    history = []
+    last_result = None
+    use_last = False  # chaining flag
+
+    while True:
+        print("\n===== BASIC CALCULATOR MENU =====")
+        print("1. Add")
+        print("2. Subtract")
+        print("3. Multiply")
+        print("4. Divide")
+        print("5. View History")
+        print("6. Clear History")
+        print("7. Exit")
+        print("=================================")
+
+        choice = input("Choose an option (1-7): ")
+
+        # Handle non-menu options
+        if choice not in {"1", "2", "3", "4", "5", "6", "7"}:
+            print("Invalid choice. Please select from 1 to 7.")
+            continue
+
+        if choice == "7":
+            print("Exiting calculator... Goodbye!")
+            break
+
+        if choice == "5":
+            print("\n--- HISTORY ---")
+            if not history:
+                print("No history available.")
+            else:
+                for item in history:
+                    print(item)
+            continue
+
+        if choice == "6":
+            history.clear()
+            print("History cleared.")
+            continue
+
+        # --- For Add, Subtract, Multiply, Divide ---
+        print("\n--- OPERATION ---")
+
+        # Chaining support (use last result as first operand)
+        if last_result is not None:
+            chain = input("Use last result as first number? (Y/N): ").strip().lower()
+            if chain == "y":
+                a = last_result
+                print(f"First number = {format_result(a)} (from last result)")
+            else:
+                a = get_number("Enter first number: ")
+        else:
+            a = get_number("Enter first number: ")
+
+        b = get_number("Enter second number: ")
+
+        # Perform calculation
+        try:
+            if choice == "1":
+                result = calc.add(a, b)
+                op = "+"
+            elif choice == "2":
+                result = calc.subtract(a, b)
+                op = "-"
+            elif choice == "3":
+                result = calc.multiply(a, b)
+                op = "*"
+            elif choice == "4":
+                if b == 0:
+                    print("Error: Division by zero is not allowed. Enter a non-zero divisor.")
+                    continue
+                result = calc.divide(a, b)
+                op = "/"
+
+            # Format and display result
+            formatted_result = format_result(float(result))
+            print(f"Result: {format_result(a)} {op} {format_result(b)} = {formatted_result}")
+
+            # Save to history
+            history.append(f"{format_result(a)} {op} {format_result(b)} = {formatted_result}")
+
+            # store last result for chaining
+            last_result = float(result)
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
+
+
+# Run the program
+if _name_ == "_main_":
+    main()
+
+
